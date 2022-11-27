@@ -50,13 +50,15 @@ def get_access_token(url, client_id, client_secret):
     if response.json()['status'] != 'SUCCESS':
         if (response.json()['message'] == 'Invalid Authentication'):
             return 'Incorrect password!'
+        if (response.json()['message'] == 'Invalid User'):
+            return 'Invalid User'
     elif (get_request_status(response) == 'FAILURE'):
         raise Exception("Another error in authentification request")
     return get_request_token(response)
     
 def get_user_info(url, client_id, client_secret):
     t = get_access_token(url, client_id, client_secret)
-    if (t == 'Incorrect password!'):
+    if ((t == 'Incorrect password!') or (t == 'Invalid User')):
         return t
     header = {'token': t}
     response = requests.get('http://' + url + '/api/users/{}'.format(client_id), headers=header)
@@ -81,7 +83,7 @@ def post_new_user(url, client_data):
 def put_user_info(url, client_id, client_secret, client_data):
     client_data_fixed=json.loads(json.dumps(client_data))
     t = get_access_token(url, client_id, client_secret)
-    if (t == 'Incorrect password!'):
+    if ((t == 'Incorrect password!') or (t == 'Invalid User')):
         return t
     header = {'token': t}
     response = requests.put('http://' + url + '/api/users/{}'.format(client_id), headers=header, json=client_data_fixed)
