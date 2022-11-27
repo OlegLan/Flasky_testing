@@ -10,21 +10,21 @@ Suite Teardown    Close All Browsers
 
 *** Variables ***
 
-&{VALID_USER}      login=username   
+&{VALID_USER}      username=username   
 ...             password=userpass  
 ...             firstname=user_firstname
 ...             lastname=user_lastname
 ...             phone=111
 
 ${INVALID_PASSWORD}    user_pass
-${PATH}    ${CURDIR}/Users.csv
+
 
 
 *** Test Cases ***
 
 
 
-Index page checking
+[TST-UI-01] Index page checking
     [Tags]    general
     Open Browser To Index Page
     Page Should Contain Link     Register
@@ -37,13 +37,13 @@ Index page checking
     
     
 
-User registration
+[TST-UI-02] User registration
     [Tags]    registration  valid_login
     ${TEST_USER}=    Create test user    &{VALID_USER}
     # Registration
     Open Browser To Register Page
     Register Page Should Be Open
-    Input Username    ${TEST_USER}[login]
+    Input Username    ${TEST_USER}[username]
     Input Password    ${TEST_USER}[password]
     Input Family name    ${TEST_USER}[lastname]
     Input First name    ${TEST_USER}[firstname]
@@ -51,7 +51,7 @@ User registration
     Submit Credentials - register 
     Login Page Should Be Open
     # Checking of registration
-    Input Username    ${TEST_USER}[login]
+    Input Username    ${TEST_USER}[username]
     Input Password    ${TEST_USER}[password]
     Submit Credentials - login
     User Information Page Should Be Open 
@@ -60,18 +60,18 @@ User registration
     
     
 
-User login - valid
+[TST-UI-03] User login - valid
     [Tags]    login_options    valid_login
     Open Browser To Login Page
-    Input Username    ${VALID_USER}[login]
+    Input Username    ${VALID_USER}[username]
     Input Password    ${VALID_USER}[password]
     Submit Credentials - login 
     User Information Page Should Be Open  
     
-User logout
+[TST-UI-04] User logout
     [Tags]    login_options    valid_login  
     Open Browser To Login Page
-    Input Username    ${VALID_USER}[login]
+    Input Username    ${VALID_USER}[username]
     Input Password    ${VALID_USER}[password]
     Submit Credentials - login 
     User Information Page Should Be Open 
@@ -79,17 +79,17 @@ User logout
     Index Page Should Be Open
     
 
-User login - invalid
+[TST-UI-05] User login - invalid
     [Tags]    login_options    invalid_login  negative  
     Open Browser To Login Page
-    Input Username    ${VALID_USER}[login]
+    Input Username    ${VALID_USER}[username]
     Input Password    ${INVALID PASSWORD}
     Submit Credentials - login 
     Error Page Should Be Open  
     
     
     
-User login - no username
+[TST-UI-06] User login - no username
     [Tags]    login_options    invalid_login  negative
     Open Browser To Login Page
     Submit Credentials - login 
@@ -101,10 +101,10 @@ User login - no username
     
     
     
-User login - no password
+[TST-UI-07] User login - no password
     [Tags]    login_options    invalid_login  negative
     Open Browser To Login Page
-    Input Username    ${VALID_USER}[login]
+    Input Username    ${VALID_USER}[username]
     Submit Credentials - login 
     # I have issues with implementation of flashed message catch:
     # https://groups.google.com/g/robotframework-users/c/tknE52B8Vmc
@@ -114,7 +114,7 @@ User login - no password
     
     
     
-User registration - from incomplete to complete
+[TST-UI-08] User registration - from incomplete to complete
     [Tags]    registration  negative     active
     ${TEST_USER}=    Create test user    &{VALID_USER}
     # Registration
@@ -123,7 +123,7 @@ User registration - from incomplete to complete
     Submit Credentials - register 
     Check Unsuccessful Registration
     
-    Input Username    ${TEST_USER}[login]
+    Input Username    ${TEST_USER}[username]
     Submit Credentials - register 
     Check Unsuccessful Registration
     
@@ -143,7 +143,7 @@ User registration - from incomplete to complete
     Submit Credentials - register 
     Login Page Should Be Open
     # Checking of registration
-    Input Username    ${TEST_USER}[login]
+    Input Username    ${TEST_USER}[username]
     Input Password    ${TEST_USER}[password]
     Submit Credentials - login
     User Information Page Should Be Open 
@@ -176,7 +176,7 @@ Check login page elements
 Check user information elements
     [Arguments]    &{user}
     Table Row Should Contain    content    1    key value
-    Table Row Should Contain    content    2    Username ${user}[login]
+    Table Row Should Contain    content    2    Username ${user}[username]
     Table Row Should Contain    content    3    First name ${user}[firstname]
     Table Row Should Contain    content    4    Last name ${user}[lastname]
     Table Row Should Contain    content    5    Phone number ${user}[phone]  
@@ -184,11 +184,3 @@ Check user information elements
     Page Should Not Contain    ${user}[password]
     
     
-Create test user
-    [Arguments]    &{user}
-    # Data randomization to not run into existing user
-    &{TEST_USER}=    Randomize user   &{user}
-    # Save user data to file
-    ${udata}=     Stringify User    ${TEST_USER}
-    Append To File          ${PATH}    ${udata}
-    [return]  &{TEST_USER}
