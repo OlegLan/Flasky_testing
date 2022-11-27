@@ -12,7 +12,8 @@ ${REGISTER URL}      http://${SERVER}/register
 ${USER URL}    http://${SERVER}/user
 ${ERROR URL}      http://${SERVER}/error
 ${INDEX URL}      http://${SERVER}/
-${PATH}         ${CURDIR}/example.txt
+${DB_USERS}         ${CURDIR}/db_users.txt
+${PATH}    ${CURDIR}/Users.csv
 
 *** Keywords ***
 
@@ -101,12 +102,30 @@ Error Message Should Be shown
     
 Randomize user
     [Arguments]    &{user}
-    ${user.login}=    Randomize String    ${user}[login]
+    ${user.username}=    Randomize String    ${user}[username]
     ${user.password}=    Randomize String    ${user}[password]
     ${user.firstname}=    Randomize String    ${user}[firstname]
     ${user.lastname}=    Randomize String    ${user}[lastname]
     ${user.phone}=    Randomize Number    ${user}[phone]
     [return]  &{user}
     
+Create test user
+    [Arguments]    &{user}
+    # Data randomization to not run into existing user
+    &{TEST_USER}=    Randomize user   &{user}
+    # Save user data to file
+    ${udata}=     Stringify User    ${TEST_USER}
+    Append To File          ${PATH}    ${udata}
+    [return]  &{TEST_USER}
+    
+Save Users From DB
+    Create file    ${DB_USERS}
+    @{USERS}=   Get All Users   ${SERVER} 
+    FOR    ${element}    IN    @{USERS}
+        Append To File          ${DB_USERS}    ${element}
+        Append To File          ${DB_USERS}    \n
+    END
+    Log To Console    \nData saved in ${DB_USERS}
+    
 
--
+
