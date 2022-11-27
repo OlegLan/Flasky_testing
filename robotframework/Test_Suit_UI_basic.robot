@@ -17,10 +17,13 @@ Suite Teardown    Close All Browsers
 ...             phone=111
 
 ${INVALID_PASSWORD}    user_pass
-
+${PATH}    ${CURDIR}/example.csv
 
 
 *** Test Cases ***
+
+
+
 Index page checking
     [Tags]    general
     Open Browser To Index Page
@@ -36,8 +39,7 @@ Index page checking
 
 User registration
     [Tags]    registration  valid_login
-    # Data randomization to not run into existing user
-    &{TEST_USER}=    Randomize user   &{VALID_USER}
+    ${TEST_USER}=    Create test user    &{VALID_USER}
     # Registration
     Open Browser To Register Page
     Register Page Should Be Open
@@ -113,9 +115,8 @@ User login - no password
     
     
 User registration - from incomplete to complete
-    [Tags]    registration  negative 
-    # Data randomization to not run into existing user
-    &{TEST_USER}=    Randomize user   &{VALID_USER}
+    [Tags]    registration  negative     active
+    ${TEST_USER}=    Create test user    &{VALID_USER}
     # Registration
     Open Browser To Register Page
     Register Page Should Be Open
@@ -181,3 +182,13 @@ Check user information elements
     Table Row Should Contain    content    5    Phone number ${user}[phone]  
     Page Should Not Contain    Password
     Page Should Not Contain    ${user}[password]
+    
+    
+Create test user
+    [Arguments]    &{user}
+    # Data randomization to not run into existing user
+    &{TEST_USER}=    Randomize user   &{user}
+    # Save user data to file
+    ${udata}=     Stringify User    ${TEST_USER}
+    Append To File          ${PATH}    ${udata}
+    [return]  &{TEST_USER}

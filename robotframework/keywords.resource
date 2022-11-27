@@ -1,6 +1,7 @@
 *** Settings ***
 Library           SeleniumLibrary
 Library           CustomLibrary.py
+Library           OperatingSystem
 
 *** Variables ***
 ${SERVER}         localhost:8080
@@ -11,8 +12,10 @@ ${REGISTER URL}      http://${SERVER}/register
 ${USER URL}    http://${SERVER}/user
 ${ERROR URL}      http://${SERVER}/error
 ${INDEX URL}      http://${SERVER}/
+${PATH}         ${CURDIR}/example.txt
 
 *** Keywords ***
+
 Open Browser To Login Page
     Open Browser    ${LOGIN URL}    ${BROWSER}
     Maximize Browser Window
@@ -102,10 +105,8 @@ Randomize user
     ${user.password}=    Randomize String    ${user}[password]
     ${user.firstname}=    Randomize String    ${user}[firstname]
     ${user.lastname}=    Randomize String    ${user}[lastname]
-    ${user.phone}=    Randomize String    ${user}[phone]
+    ${user.phone}=    Randomize Number    ${user}[phone]
     [return]  &{user}
-
-
-
+    
 
 -
