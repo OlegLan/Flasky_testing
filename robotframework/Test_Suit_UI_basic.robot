@@ -17,7 +17,7 @@ Suite Teardown    Close All Browsers
 ...             phone=111
 
 ${INVALID_PASSWORD}    user_pass
-${PATH}    ${CURDIR}/example.csv
+${PATH}    ${CURDIR}/Users.csv
 
 
 *** Test Cases ***
