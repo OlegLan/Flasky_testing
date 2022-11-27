@@ -29,10 +29,12 @@ Suite Teardown    Close All Browsers
 ...             phone=111_new2
 
 ${INVALID_PASSWORD}    user_pass
+${INVALID_USERNAME}    user_name_inv
 ${SERVER}         localhost:8080
 ${USER_ADDED_RESPONCE}    User was added
 ${USER_EXISTED_RESPONCE}    Given user is already exists!
 ${AUTH_FAILURE}    Incorrect password!
+${USER_FAILURE}    Invalid User
 
 *** Test Cases ***
 
@@ -50,7 +52,7 @@ ${AUTH_FAILURE}    Incorrect password!
     
     
 [TST-API-03] Update personal information of user with correct password
-    [Tags]    user_data    active
+    [Tags]    user_data    
     ${response}=    Put User Info    ${SERVER}    ${VALID_USER}[username]    ${VALID_USER}[password]    ${restored_data}
     # Get the old information
     ${testuser_info1}=    Get User Info    ${SERVER}    ${VALID_USER}[username]    ${VALID_USER}[password]
@@ -93,3 +95,11 @@ ${AUTH_FAILURE}    Incorrect password!
     # Get the new information - should not change
     ${testuser_info2}=    Get User Info    ${SERVER}    ${VALID_USER}[username]    ${VALID_USER}[password]
     Should Be Equal  ${testuser_info1}  ${testuser_info2}
+    
+    
+[TST-API-08] User not found
+    [Tags]    user_data  negative    active
+    ${response}=    Get User Info    ${SERVER}    ${INVALID_USERNAME}    ${VALID_USER}[password]
+    Should Be Equal    ${response}    ${USER_FAILURE}
+    ${response}=    Put User Info    ${SERVER}    ${INVALID_USERNAME}    ${VALID_USER}[password]    ${new_data2}
+    Should Be Equal    ${response}    ${USER_FAILURE}
