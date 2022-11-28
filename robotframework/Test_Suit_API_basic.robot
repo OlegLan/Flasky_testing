@@ -31,7 +31,7 @@ Suite Teardown    Close All Browsers
 ${INVALID_PASSWORD}    user_pass
 ${INVALID_USERNAME}    user_name_inv
 ${SERVER}         localhost:8080
-${USER_ADDED_RESPONCE}    User was added
+${USER_ADDED_RESPONCE}    SUCCESS
 ${USER_EXISTED_RESPONCE}    Given user is already exists!
 ${AUTH_FAILURE}    Incorrect password!
 ${USER_FAILURE}    Invalid User
